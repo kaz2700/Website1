@@ -12,7 +12,7 @@ const images = [
 
 
 function getImage(){
-  return new Date().getSeconds() % 2 === 0 ? day : night
+  return new Date().getHours() % 2 === 0 ? day : night
 }
 
 function MyButton({clicks, onClick}){
@@ -35,24 +35,37 @@ function ogSquare({onClick}){
       Enter password:
     </div>
     <div className="row">
-        <button onClick={() => {
-          onClick(1)
-          }} className="square">1</button>
-        <button className="square">2</button>
-        <button className="square">3</button>
+        <Square/>
+        <Square/>
+        <Square/>
       </div>
       <div className="row">
-        <button className="square">4</button>
-        <button className="square">5</button>
-        <button className="square">6</button>
+        <Square/>
+        <Square/>
+        <Square/>
       </div>
       <div className="row">
-        <button className="square">7</button>
-        <button className="square">8</button>
-        <button className="square">9</button>
+        <Square/>
+        <Square/>
+        <Square/>
       </div>
     </>
   )
+}
+
+function Square()
+{
+  const [value, setValue] = useState(null);
+  function tableClick()
+  {
+    setValue('X')
+  }
+
+  return <button 
+            className="custom-button"
+            onClick={tableClick}>
+              {value}
+          </button>
 }
 
 function NumberBox({addNumber}, id){
@@ -60,7 +73,7 @@ function NumberBox({addNumber}, id){
     <>
    <button onClick={() => {
           addNumber(id)
-          }} className="square">{id}</button>
+          }} className="custom-button">{id}</button>
     </>
   )
 }
@@ -70,7 +83,7 @@ function EnterBox({enter}) {
     <>
    <button onClick={() => {
           enter()
-          }} className="square">Enter</button>
+          }} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">Enter</button>
     </>
   )
 }
@@ -80,7 +93,7 @@ function ResetBox({reset}){
     <>
     <button onClick={() => {
           reset()
-          }} className="square">Reset</button>
+          }} className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Reset</button>
     </>
   )
 }
@@ -131,6 +144,10 @@ function App() {
   const matchPw = "777";
   const [pw, setPw] = useState("");
   const [boolean, setBoolean] = useState(false);
+  const [timer, setTimer] = useState(0)
+  function handleTimer(){
+    setTimer(timer + 1)
+  }
 
   function handleBoolean(){
     setBoolean(!boolean);
@@ -154,9 +171,19 @@ function App() {
     setBoolean(false)
     setPw("")
   }
-
+  setInterval(handleTimer, 1000)
   return(
     <div>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-4">
+      washanin, welkom ta da <span class="text-blue-500">crib</span>
+      </h1>
+      <p class="text-lg font-semibold text-gray-700">
+      Current Time: <span class="text-blue-500">{new Date().getHours() + " " + new Date().getMinutes() + " " + new Date().getSeconds()}</span>
+      </p>
+      <p class="text-lg font-semibold text-gray-700">
+      Time online: <span class="text-blue-500">{timer}</span>
+      </p>
+      
       <img 
       className="avatar"
       src={getImage()}
@@ -164,22 +191,23 @@ function App() {
 
       <h1
       className="text"
-      >pw {pw}{  booleanTest(boolean)      }</h1>
-      
+      >pw: {pw}{  booleanTest(boolean)}</h1>
       <MyButton clicks={clicks} onClick={handleClick}/>
       <MyButton clicks={clicks} onClick={handleClick}/>
       <MyIndependentButton/>nxi
       <Dial addNumber={handlePw} enter={enter} reset={reset}></Dial>
+      <ogSquare onClick={handlePw}>dd</ogSquare>
+      {ogSquare(handlePw)}
 
       <ol> {
         images.map(image  =>
           <li
           key = {image.name}
-          style={{color: 'gold'}}
+          style={{color: 'black'}}
           >
             <p>
               {
-                image.name
+                "Title: " + image.name
               }
             </p>
             <img

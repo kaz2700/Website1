@@ -51,6 +51,33 @@
   font:bold;
   color:#235d6d
 }
+.custom-button {
+  /* Padding */
+  padding: 0.25rem 0.75rem; /* Change to your desired padding */
+  /* Font size */
+  font-size: 1rem; /* Change to your desired font size */
+
+  /* Text color */
+  color: #000000; /* Change to your desired text color */
+
+  /* Background color */
+  background-color: #ffffff; /* Change to your desired background color */
+
+  /* Border radius */
+  border-radius: 0rem; /* Change to your desired border radius */
+
+  /* Hover effects */
+  transition: background-color 0.3s ease-in-out; /* Smooth transition */
+
+  border: 1px solid; /* Add a border with default color */
+
+  border-color: #0000005b; /* Change to your desired border color */
+
+
+}
+.custom-button:hover {
+  background-color: #45679e; /* Change to your desired hover background color */
+}
 
 @keyframes App-logo-spin {
   from {
