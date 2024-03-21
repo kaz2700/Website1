@@ -5,6 +5,8 @@ import { createRoot } from 'react-dom/client';
 var day = "https://cityfurnish.com/blog/wp-content/uploads/2023/08/beach-near-hotel-min-1200x800.jpg"
 var night = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAFQo6dHU5iw_QD0R7K70kiGllxt4YSXTdgg&usqp=CAU"
 
+const blank = "⠀";
+
 const images = [
 {image: day, name: "day"},
 {image: night, name: "night"}
@@ -24,48 +26,8 @@ function MyButton({clicks, onClick}){
 function MyIndependentButton(){
   const [clicks, setClicks] = useState(0);
   return (
-    <button onClick={() => {setClicks(clicks + 1)}}>Clicked {clicks}</button> //u can also have a lambda w code if ur one o f those
+    <button onClick={() => {setClicks(clicks + 1)}}> Clicked {clicks}</button> //u can also have a lambda w code if ur one o f those
   );
-}
-
-function ogSquare({onClick}){
-  return (
-    <>
-    <div className="title">
-      Enter password:
-    </div>
-    <div className="row">
-        <Square/>
-        <Square/>
-        <Square/>
-      </div>
-      <div className="row">
-        <Square/>
-        <Square/>
-        <Square/>
-      </div>
-      <div className="row">
-        <Square/>
-        <Square/>
-        <Square/>
-      </div>
-    </>
-  )
-}
-
-function Square()
-{
-  const [value, setValue] = useState(null);
-  function tableClick()
-  {
-    setValue('X')
-  }
-
-  return <button 
-            className="custom-button"
-            onClick={tableClick}>
-              {value}
-          </button>
 }
 
 function NumberBox({addNumber}, id){
@@ -139,6 +101,106 @@ function booleanTest(bool){
      )
 }
 
+function OGSquare({xIsNext, squares, onPlay}){
+
+  function handleClick(i) {
+    if(squares[i] !== "⠀" || calculateWinner(squares)) {
+      return;
+    }
+    
+  const nextSquares = squares.slice();
+  if(xIsNext) {
+      nextSquares[i] = "X";
+  } else {
+      nextSquares[i] = "O";
+  }
+    onPlay(nextSquares)
+  }
+
+  const winner = calculateWinner(squares);
+  let status;
+  if (winner) {
+    status = "Winner: " + winner;
+  } else {
+    status = "Next player: " + (xIsNext ? "X" : "O");
+  }
+
+  return (
+    <>
+    <div className="status">{status}</div>
+    <div className="title">
+      las damas primero:
+    </div>
+    <div className="row">
+        <Square value={squares[0]} onSquareClick={() => {handleClick(0)}}/>
+        <Square value={squares[1]} onSquareClick={() => {handleClick(1)}}/>
+        <Square value={squares[2]} onSquareClick={() => {handleClick(2)}}/>
+      </div>
+      <div className="row">
+        <Square value={squares[3]} onSquareClick={() => {handleClick(3)}}/>
+        <Square value={squares[4]} onSquareClick={() => {handleClick(4)}}/>
+        <Square value={squares[5]} onSquareClick={() => {handleClick(5)}}/>
+      </div>
+      <div className="row">
+        <Square value={squares[6]} onSquareClick={() => {handleClick(6)}}/>
+        <Square value={squares[7]} onSquareClick={() => {handleClick(7)}}/>
+        <Square value={squares[8]} onSquareClick={() => {handleClick(8)}}  />
+      </div>
+    </>
+  )
+}
+
+function Square({value, onSquareClick})
+{
+  return <button 
+            className="custom-button"
+            onClick={onSquareClick}
+          >
+              {value}
+          </button>
+}
+
+function Game()
+{
+  const [xIsNext, setXIsNext] = useState(true);
+  const [history, setHistory] = useState([Array(9).fill("⠀")]);
+  const currentSquares = history[history.length - 1];
+
+  function handlePlay(nextSquares) {
+    setHistory([...history, nextSquares]);
+    setXIsNext(!xIsNext);
+  }
+
+  function jumpTo(nextMove) {
+    // TODO
+  }
+
+  const moves = history.map((squares, move) => {
+    let description;
+    if (move > 0) {
+      description = 'Go to move #' + move;
+    } else {
+      description = 'Go to game start';
+    }
+    return (
+      <li>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+
+  return (
+     <div className="game">
+      <div className="game-board">
+        <OGSquare xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>{moves}</ol>
+      </div>
+    </div>
+  )
+}
+
 function App() {
   const [clicks, setClicks] = useState(0);
   const matchPw = "777";
@@ -192,22 +254,18 @@ function App() {
       <h1
       className="text"
       >pw: {pw}{  booleanTest(boolean)}</h1>
-      <MyButton clicks={clicks} onClick={handleClick}/>
-      <MyButton clicks={clicks} onClick={handleClick}/>
-      <MyIndependentButton/>nxi
-      <Dial addNumber={handlePw} enter={enter} reset={reset}></Dial>
-      <ogSquare onClick={handlePw}>dd</ogSquare>
-      {ogSquare(handlePw)}
-
+      <MyButton clicks={clicks} onClick={handleClick} />
+      <MyButton clicks={clicks} onClick={handleClick} />
+      <MyIndependentButton/>
       <ol> {
-        images.map(image  =>
+        images.map((image, num)  =>
           <li
           key = {image.name}
           style={{color: 'black'}}
           >
             <p>
               {
-                "Title: " + image.name
+                "Title: " + image.name + num
               }
             </p>
             <img
@@ -221,4 +279,33 @@ function App() {
   );
 }
 
-export default App;
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] !== "⠀" && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  var space = 0;
+  squares.forEach(element => {
+    if(element !== "⠀") {
+      space = space + 1
+    }
+  });
+  if (space === 9) {
+    return "draw";
+  }
+  return null;
+}
+
+export default Game;
