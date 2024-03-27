@@ -51,6 +51,45 @@
   font:bold;
   color:#235d6d
 }
+
+.centered-container {
+  display: flex; /* or use grid */
+  justify-content: center;
+  align-items: center;
+  /*height: 100vh; /* Adjust as needed */
+}
+
+.custom-div {
+  margin-left: 42%; /* Adjust horizontal position */
+  margin-top: 30px; /* Adjust vertical position */
+}
+.text-box {
+   /* Padding */
+   padding: 0.25rem 0.75rem; /* Change to your desired padding */
+   /* Font size */
+   font-size: 1rem; /* Change to your desired font size */
+ 
+   /* Text color */
+   color: #000000; /* Change to your desired text color */
+ 
+   /* Background color */
+   background-color: #ffffff; /* Change to your desired background color */
+ 
+   /* Border radius */
+   border-radius: 0rem; /* Change to your desired border radius */
+ 
+   /* Hover effects */
+   transition: background-color 0.3s ease-in-out; /* Smooth transition */
+ 
+   border: 1px solid; /* Add a border with default color */
+ 
+   border-color: #0000005b; /* Change to your desired border color */
+}
+
+.text-box:hover {
+  background-color: #e7e7e7; /* Change to your desired hover background color */
+}
+
 .custom-button {
   /* Padding */
   padding: 0.25rem 0.75rem; /* Change to your desired padding */
