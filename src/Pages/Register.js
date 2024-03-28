@@ -1,18 +1,14 @@
 import { useState } from 'react';
 
-const accounts = new Map();
-accounts.set("user", "password");
-
-
-function RegisterButton({username, password, password2}) {
+function RegisterButton({supabase, username, password, password2}) {
   return(
     <div className='centered-container'>
-      <button className="custom-button" onClick={()=>{registerAccount(username, password, password2)}}>Register</button>
+      <button className="custom-button" onClick={()=>{registerAccount(supabase, username, password, password2)}}>Register</button>
     </div>
   );
 }
 
-function RegisterBar() {
+function RegisterBar({supabase}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
@@ -38,7 +34,7 @@ function RegisterBar() {
         </label>
         </div>
     </form>
-    <RegisterButton username ={username} password={password} password2={password2}/>
+    <RegisterButton supabase={supabase} username ={username} password={password} password2={password2}/>
     </>
 
   );
@@ -56,27 +52,38 @@ function InfoMessage({newMessage}) {
   )
 }
 
-function registerAccount(username, password, password2) {
+async function registerAccount(supabase, username, password, password2) {
+  if(username.length < 3) {
+    alert("Username length must be greater than 3.");
+    return;
+  }
+
+  if(password.length < 3) {
+    alert("Password length must be greater than 3.");
+    return;
+  }
+
   if (password !== password2) {
     alert("Passwords do not match.")
     return;
   }
-  var rememberMe = document.getElementById('loginRememberMe').value;
 
-  if (accounts.has(username)) {
-    alert("account already exists bitch");
+
+  const { data } = await supabase.from('accounts').select('password').eq('username', username)
+
+  if (data.length  !== 0) {
+    alert(`The accounts exists with password "${data[0].password}".`);
     return;
   }
 
-  accounts.set(username, password)
-  alert("account created");
+  await supabase.from('accounts').insert({username: username, password: password})
+  alert("Account created");
 }
 
-function Register() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+function Register({supabase}) {
   return(
     <div>
-      <RegisterBar/>
+      <RegisterBar supabase={supabase}/>
     </div>
   )
 }

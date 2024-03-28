@@ -1,41 +1,39 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
-const accounts = new Map();
-accounts.set("user", "password");
-
-function LoginButton() {
+function LoginButton({supabase, username, password}) {
   return(
     <div className='centered-container'>
-      <button className="custom-button" onClick={checkLogin}>Login</button>
+      <button className="custom-button" onClick={() => checkLogin(supabase, username, password)}>Login</button>
     </div>
   );
 }
 
-function RegisterButton() {
-  return(
-    <div className='centered-container'>
-      <button class="custom-button" onClick={registerAccount}>Register</button>
-    </div>
-  );
-}
+function LoginBar({supabase}) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
-function LoginBar() {
   return (
-    <form>
-        <div className='centered-container'>
-          <input className="text-box" type="text" placeholder="Username" id="loginUsername" />
-        </div>
-        <div className='centered-container'>
-        <input className="text-box" type="password" placeholder="Password" id="loginPassword"/>
-        </div>
-        <div className='custom-div'>
-        <label>
-          <input type="checkbox" id="loginRememberMe"/>
-          {' '}
-          Remember me
-        </label>
-        </div>
-    </form>
+    <>
+      <form>
+          <div className='centered-container'>
+            <input className="text-box" type="text" placeholder="Username" onChange={event => {setUsername(event.target.value)}} />
+          </div>
+          <div className='centered-container'>
+          <input className="text-box" type="password" placeholder="Password" onChange={event => {setPassword(event.target.value)}}/>
+          </div>
+          <div className='custom-div'>
+          <label>
+            <input type="checkbox" onChange={event => {setRememberMe(event.target.checked)}}/>
+            {' '}
+            Remember me
+          </label>
+          </div>
+      </form>
+      <LoginButton supabase={supabase} username={username} password={password}/>
+    </>
+
   );
 }
 
@@ -51,39 +49,29 @@ function InfoMessage({newMessage}) {
   )
 }
 
-function checkLogin() {
-  var username = document.getElementById('loginUsername').value;
-  var password = document.getElementById('loginPassword').value;
-  var rememberMe = document.getElementById('loginRememberMe').value;
+async function checkLogin(supabase, username, password) {
+  const { data } = await supabase.from('accounts').select('password').eq('username', username)
+  //const navigate = useNavigate();
 
-  if (accounts.has(username) && accounts.get(username) === password) {
-      alert("logged in");
-  } else {
-    alert("wrong credentials");
-  }
-}
-
-function registerAccount() {
-  var username = document.getElementById('loginUsername').value;
-  var password = document.getElementById('loginPassword').value;
-  var rememberMe = document.getElementById('loginRememberMe').value;
-
-  if (accounts.has(username)) {
-    alert("account already exists bitch");
+  if(data.length !== 1) {
+    alert("Wrong credentials");
     return;
   }
 
-  accounts.set(username, password)
-  alert("account created");
+  if (data[0].password !== password) {
+    alert("Wrong credentials");
+    return;
+  }
+
+  alert("Logged in")
 }
 
-function Login() {
+function Login({supabase}) {
   const [loginBool, setLoginBool] = useState(false);    
 
   return(
     <div>
-      <LoginBar/>
-      <LoginButton onClick={checkLogin}/>
+      <LoginBar supabase={supabase}/>
     </div>
   )
 }
