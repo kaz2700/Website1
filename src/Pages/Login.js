@@ -1,59 +1,80 @@
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { LogInContext } from "../Context/LogInContext";
+import NavBar from "../Components/NavBar";
+import { SupabaseContext } from "../Context/SupabaseContext";
 
-function LoginButton({supabase, username, password}) {
-  return(
-    <div className='centered-container'>
-      <button className="custom-button" onClick={() => checkLogin(supabase, username, password)}>Login</button>
-    </div>
-  );
-}
-
-function LoginBar({supabase}) {
+function LoginBar() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const { isLoggedIn, setIsLoggedIn } = useContext(LogInContext);
+  const supabase = useContext(SupabaseContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn !== null) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <>
+      <NavBar />
       <form>
-          <div className='centered-container'>
-            <input className="text-box" type="text" placeholder="Username" onChange={event => {setUsername(event.target.value)}} />
-          </div>
-          <div className='centered-container'>
-          <input className="text-box" type="password" placeholder="Password" onChange={event => {setPassword(event.target.value)}}/>
-          </div>
-          <div className='custom-div'>
+        <div className="centered-container">
+          <input
+            className="text-box"
+            type="text"
+            placeholder="Username"
+            onChange={(event) => {
+              setUsername(event.target.value);
+            }}
+          />
+        </div>
+        <div className="centered-container">
+          <input
+            className="text-box"
+            type="password"
+            placeholder="Password"
+            onChange={(event) => {
+              setPassword(event.target.value);
+            }}
+          />
+        </div>
+        <div className="custom-div">
           <label>
-            <input type="checkbox" onChange={event => {setRememberMe(event.target.checked)}}/>
-            {' '}
-            Remember me
+            <input type="checkbox" /> Remember me
           </label>
-          </div>
+        </div>
       </form>
-      <LoginButton supabase={supabase} username={username} password={password}/>
+      <div className="centered-container">
+        <button
+          className="custom-button"
+          onClick={() =>
+            checkLogin(supabase, username, password, isLoggedIn, setIsLoggedIn)
+          }
+        >
+          Login
+        </button>
+      </div>
     </>
-
   );
 }
 
-function InfoMessage({newMessage}) {
-  const [message, setMessage] = useState("dddd");
-  if(message !== newMessage) {
-    setMessage(newMessage);
-  }
-  return(
-    <>
-    {message}
-    </>
-  )
-}
+async function checkLogin(
+  supabase,
+  username,
+  password,
+  isLoggedIn,
+  setIsLoggedIn,
+) {
+  const { data } = await supabase
+    .from("accounts")
+    .select()
+    .eq("username", username);
 
-async function checkLogin(supabase, username, password) {
-  const { data } = await supabase.from('accounts').select('password').eq('username', username)
-  //const navigate = useNavigate();
-
-  if(data.length !== 1) {
+  if (data.length !== 1) {
     alert("Wrong credentials");
     return;
   }
@@ -63,17 +84,20 @@ async function checkLogin(supabase, username, password) {
     return;
   }
 
-  alert("Logged in")
+  if (isLoggedIn) {
+    alert("Already logged in");
+    return;
+  }
+  setIsLoggedIn(data[0].id);
+  alert("Logged in");
 }
 
-function Login({supabase}) {
-  const [loginBool, setLoginBool] = useState(false);    
-
-  return(
+function Login({ supabase }) {
+  return (
     <div>
-      <LoginBar supabase={supabase}/>
+      <LoginBar supabase={supabase} />
     </div>
-  )
+  );
 }
 
 export default Login;

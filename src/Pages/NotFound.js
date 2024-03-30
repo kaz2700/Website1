@@ -1,9 +1,12 @@
+import NavBar from "../Components/NavBar";
+
 const NotFound = () => {
-    return (
-       <>
-          Not Found.
-       </>
-    );
-   };
-   
-   export default NotFound;
+  return (
+    <>
+      <NavBar />
+      Not Found.
+    </>
+  );
+};
+
+export default NotFound;
