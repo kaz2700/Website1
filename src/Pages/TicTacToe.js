@@ -1,3 +1,7 @@
+import { useState } from "react";
+import Navbar from "../Components/NavBar";
+
+
 var day = "https://cityfurnish.com/blog/wp-content/uploads/2023/08/beach-near-hotel-min-1200x800.jpg"
 var night = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAFQo6dHU5iw_QD0R7K70kiGllxt4YSXTdgg&usqp=CAU"
 
@@ -156,7 +160,7 @@ function Square({value, onSquareClick})
           </button>
 }
 
-function Game()
+export default function Game()
 {
   const [history, setHistory] = useState([Array(9).fill("⠀")]);
   const [currentMove, setCurrentMove] = useState(0);
@@ -189,14 +193,18 @@ function Game()
   });
 
   return (
-     <div className="game">
-      <div className="game-board">
-        <OGSquare xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
-      </div>
-      <div className="game-info">
-        <ol>{moves}</ol>
-      </div>
-    </div>
+    <>
+        <Navbar />
+        <div className="game">
+        <div className="game-board">
+            <OGSquare xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        </div>
+        <div className="game-info">
+            <ol>{moves}</ol>
+        </div>
+        </div>
+    </>
+     
   )
 }
 
@@ -235,7 +243,7 @@ function App() {
   setInterval(handleTimer, 1000)
   return(
     <div>
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-4">
+      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-4">
       washanin, welkom ta da <span class="text-blue-500">crib</span>
       </h1>
       <p class="text-lg font-semibold text-gray-700">

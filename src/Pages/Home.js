@@ -5,7 +5,7 @@ import { SupabaseContext } from "../Context/SupabaseContext";
 
 const Home = () => {
   const [username, setUsername] = useState("Stranger");
-  const { isLoggedIn } = useContext(LogInContext);
+  const { accountId } = useContext(LogInContext);
   const supabase = useContext(SupabaseContext);
 
   useEffect(() => {
@@ -13,18 +13,20 @@ const Home = () => {
       const { data } = await supabase
         .from("accounts")
         .select("username")
-        .eq("id", isLoggedIn);
+        .eq("id", accountId);
       setUsername(data[0].username);
     }
-    if (isLoggedIn !== null) {
+    if (accountId !== null) {
       fetchUsername();
     }
-  }, [isLoggedIn, supabase]);
+  }, [accountId, supabase]);
 
   return (
     <>
       <NavBar />
-      {isLoggedIn !== null ? "Welcome " + username : "Not welcome"}
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 text-center leading-tight tracking-tight mb-4">
+          {localStorage.getItem("loggedInUser") !== null ? "Welcome " + JSON.parse(localStorage.getItem("loggedInUser")).username : "Not welcome"}
+        </h1>
     </>
   );
 };

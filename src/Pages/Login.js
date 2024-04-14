@@ -8,15 +8,15 @@ import { SupabaseContext } from "../Context/SupabaseContext";
 function LoginBar() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { isLoggedIn, setIsLoggedIn } = useContext(LogInContext);
+  const { accountId, setAccountId } = useContext(LogInContext);
   const supabase = useContext(SupabaseContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoggedIn !== null) {
+    if (accountId !== null) {
       navigate("/");
     }
-  }, [isLoggedIn, navigate]);
+  }, [accountId, navigate]);
 
   return (
     <>
@@ -52,7 +52,7 @@ function LoginBar() {
         <button
           className="custom-button"
           onClick={() =>
-            checkLogin(supabase, username, password, isLoggedIn, setIsLoggedIn)
+            checkLogin(supabase, username, password, accountId, setAccountId)
           }
         >
           Login
@@ -66,13 +66,10 @@ async function checkLogin(
   supabase,
   username,
   password,
-  isLoggedIn,
-  setIsLoggedIn,
+  accountId,
+  setAccountId,
 ) {
-  const { data } = await supabase
-    .from("accounts")
-    .select()
-    .eq("username", username);
+  const { data } = await supabase.from("accounts").select().eq("username", username);
 
   if (data.length !== 1) {
     alert("Wrong credentials");
@@ -84,12 +81,12 @@ async function checkLogin(
     return;
   }
 
-  if (isLoggedIn) {
+  if (localStorage.getItem("loggedInUser") !== null) {
     alert("Already logged in");
     return;
   }
-  setIsLoggedIn(data[0].id);
-  alert("Logged in");
+  setAccountId(data[0].id);
+  localStorage.setItem("loggedInUser", JSON.stringify(data[0]));
 }
 
 function Login({ supabase }) {

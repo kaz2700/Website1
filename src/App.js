@@ -4,9 +4,12 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
+import TicTacToe from "./Pages/TicTacToe"
+import Todo from "./Pages/Todo"
 import { createClient } from "@supabase/supabase-js";
 import { LogInContext } from "./Context/LogInContext";
 import { SupabaseContext } from "./Context/SupabaseContext";
+import MyAccount from "./Pages/MyAccount";
 
 const supabase = createClient(
   "https://njtszvcppxsouonixcqz.supabase.co",
@@ -14,16 +17,19 @@ const supabase = createClient(
 );
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [accountId, setAccountId] = useState(null);
 
   return (
     <>
       <SupabaseContext.Provider value={supabase}>
-        <LogInContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+        <LogInContext.Provider value={{ accountId, setAccountId }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/tictactoe" element={<TicTacToe />} />
+            <Route path="/to-do" element={<Todo />} />
+            <Route path="/my-account" element={<MyAccount />} />
           </Routes>
         </LogInContext.Provider>
       </SupabaseContext.Provider>

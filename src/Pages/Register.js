@@ -10,16 +10,16 @@ function RegisterBar() {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const { isLoggedIn, setIsLoggedIn } = useContext(LogInContext);
+  const { accountId, setAccountId } = useContext(LogInContext);
   const supabase = useContext(SupabaseContext);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (isLoggedIn !== null) {
+    if (accountId !== null) {
       navigate("/");
     }
-  }, [isLoggedIn, navigate]);
+  }, [accountId, navigate]);
 
   return (
     <>
@@ -75,7 +75,7 @@ function RegisterBar() {
               username,
               password,
               password2,
-              setIsLoggedIn,
+              setAccountId,
               setErrorMessage,
             );
           }}
@@ -92,7 +92,7 @@ async function registerAccount(
   username,
   password,
   password2,
-  setIsLoggedIn,
+  setAccountId,
   setErrorMessage,
 ) {
   if (username.length < 3) {
@@ -110,12 +110,17 @@ async function registerAccount(
     return;
   }
 
+  if (localStorage.getItem("loggedInUser") !== null) {
+    setErrorMessage("Already logged in.");
+    return;
+  }
+
   const { data } = await supabase
     .from("accounts")
     .select()
     .eq("username", username);
   if (data.length !== 0) {
-    setErrorMessage(`The accounts exists with password "${data[0].password}".`);
+    setErrorMessage(`The accounts exists.`);
     return;
   }
 
@@ -123,7 +128,7 @@ async function registerAccount(
     .from("accounts")
     .insert({ username: username, password: password })
     .select();
-  setIsLoggedIn(account_info.data[0].id);
+  setAccountId(account_info.data[0].id);
   alert("Account created");
 }
 
